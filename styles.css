@@ -49,6 +49,8 @@ header {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  /* scrolled page text fades out behind the wordmark instead of overlapping it */
+  background: linear-gradient(var(--bg) 75%, transparent);
 }
 .wordmark {
   font-family: var(--serif);
@@ -441,7 +443,7 @@ header {
 }
 
 @media (max-width: 640px) {
-  .contact-body {
+  .globe-callout .contact-body {
     grid-template-columns: 1fr;
     gap: 24px;
   }

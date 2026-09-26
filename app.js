@@ -1,4 +1,4 @@
-import { PROJECTS, RESUME, SKILLS, INTERESTS, PLACES } from "./data.js";
+import { PROJECTS, RESUME, PLACES } from "./data.js";
 import { createGlobe } from "./globe.js";
 
 // Content is static and trusted, but escape anything interpolated into HTML anyway so a
@@ -133,8 +133,6 @@ for (const [sec, items] of Object.entries(RESUME)) {
       <div class="role">${esc(it.role)}</div><ul>${it.pts.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div></div>`;
   }
 }
-rh += `<div class="section-label">Skills</div><div class="row"><div class="when">Technical</div><div class="tags">${SKILLS.map((s) => `<span class="tag">${esc(s)}</span>`).join("")}</div></div>`;
-rh += `<div class="row"><div class="when">Interests</div><div class="body-text">${esc(INTERESTS)}</div></div>`;
 rEl.innerHTML = rh;
 
 /* ---------- views ---------- */
@@ -248,7 +246,6 @@ const INDEX = [
   { label: "Home", type: "Page", text: "home about globe places map world", act: () => go(1) },
   { label: "Email", type: "Contact", text: "email mail contact", act: () => go(3) },
   { label: "LinkedIn", type: "Contact", text: "linkedin contact", act: () => go(3) },
-  ...SKILLS.map((s) => ({ label: s, type: "Skill", text: s, act: () => go(2) })),
 ];
 let hits = [],
   sel = 0;
@@ -327,6 +324,7 @@ document.addEventListener("keydown", (e) => {
 const globe = createGlobe({
   canvas: document.getElementById("globe"),
   callout: document.getElementById("globeCallout"),
+  avoid: document.querySelector("#v1 .legend"),
   places: PLACES,
   reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
 });

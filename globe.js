@@ -28,7 +28,7 @@ function slerp(a, b, t) {
   return [a[0] * ka + b[0] * kb, a[1] * ka + b[1] * kb, a[2] * ka + b[2] * kb];
 }
 
-export function createGlobe({ canvas, callout, places, reduceMotion = false }) {
+export function createGlobe({ canvas, callout, places, avoid = null, reduceMotion = false }) {
   const ctx = canvas.getContext("2d");
 
   // One marker per location. Places are grouped by `area` if set (e.g. three Minnesota towns
@@ -271,7 +271,11 @@ export function createGlobe({ canvas, callout, places, reduceMotion = false }) {
     // must, but always clear of the headline (top) and the legend (bottom-left).
     const narrow = w < 640;
     const lx = narrow ? 16 : Math.max(16, cx - R - cw - 40);
-    const ly = narrow ? Math.min(cy + R + 14, h - ch - 96) : Math.min(Math.max(140, fp.y - ch / 2), h - ch - 150);
+    // never let the callout run into the element below it (the legend sentence)
+    const floor = avoid ? avoid.offsetTop - 8 : h - 150;
+    const ly = narrow
+      ? Math.max(0, Math.min(cy + R + 14, floor - ch))
+      : Math.min(Math.max(140, fp.y - ch / 2), floor - ch);
     callout.style.transform = `translate(${Math.round(lx)}px, ${Math.round(ly)}px)`;
     ctx.setLineDash([3, 3]);
     ctx.strokeStyle = INK;
