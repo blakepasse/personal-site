@@ -121,103 +121,7 @@ header {
   transition: opacity 0.35s ease;
 }
 
-/* [1] projects carousel */
-.track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.1, 1);
-  will-change: transform;
-}
-.card {
-  flex: none;
-  width: 310px;
-  cursor: pointer;
-  text-align: center;
-}
-.card canvas {
-  display: block;
-  width: 310px;
-  height: 280px;
-  background: var(--green-pale);
-  transition: filter 0.3s;
-}
-.card:not(.current) canvas {
-  filter: saturate(0.85);
-}
-.card .cap {
-  margin-top: 18px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.card.current .cap {
-  opacity: 1;
-}
-.carousel-nav {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-.carousel-nav button {
-  pointer-events: auto;
-  color: var(--muted);
-  padding: 10px;
-}
-.carousel-nav button:hover {
-  color: var(--ink);
-}
-
-/* [2] network */
-#net {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.legend {
-  position: absolute;
-  left: 20px;
-  bottom: 52px;
-  max-width: 280px;
-}
-.legend p + p {
-  margin-top: 10px;
-}
-.bio {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 520px;
-  width: calc(100% - 40px);
-  text-align: center;
-  pointer-events: none;
-}
-.bio h1 {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(30px, 5vw, 46px);
-  letter-spacing: -0.02em;
-  line-height: 1.08;
-}
-.bio p {
-  margin-top: 18px;
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.85);
-  display: inline-block;
-  padding: 2px 4px;
-}
-
-/* [3] resume + [4] contact: scrolling document */
+/* [2] resume + [3] contact: scrolling document */
 .doc {
   overflow-y: auto;
   padding: 110px 20px 90px;
@@ -515,13 +419,34 @@ header {
   color: var(--muted);
 }
 
+.contact-layout {
+  max-width: 920px;
+}
+/* photo under the heading, contact links beside it (stacked on phones) */
+.contact-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.contact-body > .contact-list {
+  min-width: 0;
+}
+.portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
 @media (max-width: 640px) {
-  .card,
-  .card canvas {
-    width: 250px;
+  .contact-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
-  .card canvas {
-    height: 226px;
+  .portrait {
+    width: 160px;
   }
   .row,
   .contact-list a {
@@ -535,7 +460,7 @@ header {
     display: none;
   }
   .legend {
-    display: none;
+    bottom: 50px;
   }
   .menu nav {
     margin-right: 44px;
@@ -557,4 +482,80 @@ header {
 }
 .body-text {
   font-size: 12px;
+}
+
+/* [1] home: headline + globe */
+.legend {
+  position: absolute;
+  left: 20px;
+  bottom: 52px;
+  max-width: 280px;
+  z-index: 1;
+}
+.legend p + p {
+  margin-top: 10px;
+}
+#globe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+#globe:active {
+  cursor: grabbing;
+}
+.globe-callout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  max-width: min(520px, calc(100vw - 32px));
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2px 0;
+}
+.globe-callout div:first-child {
+  color: var(--muted);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.intro {
+  position: absolute;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 640px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.intro h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(24px, 3.6vw, 36px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.menu-label {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* scrollable pages are focusable for keyboard scrolling; only show a ring for keyboard focus */
+.doc:focus {
+  outline: none;
+}
+.doc:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
 }

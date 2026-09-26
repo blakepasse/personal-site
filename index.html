@@ -23,61 +23,51 @@
     <header><a class="wordmark" href="#" data-go="1">Blake Passe</a></header>
     <button type="button" class="pill" id="menuBtn" aria-expanded="false" aria-controls="menu">[M]</button>
 
-    <!-- [1] Projects -->
-    <section class="view" id="v1" aria-label="Projects">
-      <div class="track" id="track"></div>
-      <div class="carousel-nav">
-        <button type="button" id="prev" aria-label="Previous project">←</button>
-        <button type="button" id="next" aria-label="Next project">→</button>
+    <!-- [1] Home: headline + globe -->
+    <section class="view" id="v1" aria-label="Home">
+      <div class="intro">
+        <h1>Turning new technology into real products.</h1>
       </div>
-    </section>
-
-    <!-- [2] Network / about -->
-    <section class="view" id="v2" aria-label="About">
-      <canvas id="net"></canvas>
-      <div class="bio">
-        <h1>Building AI systems that leave the lab.</h1>
-        <p>Duke CS · Y Combinator founder · former Mayo Clinic &amp; Northrop Grumman AI</p>
-      </div>
+      <canvas id="globe"></canvas>
+      <div class="globe-callout" id="globeCallout" aria-hidden="true" hidden></div>
       <div class="legend">
-        <p>● Shipped&nbsp;&nbsp;○ Research</p>
-        <p>Live graph of the projects, labs and teams I've worked with. Move your cursor to pull the network.</p>
+        <p>Places I've studied, built, and researched. Drag to spin; hover or tap a node.</p>
       </div>
+      <ul class="sr-only" id="placesList"></ul>
     </section>
 
-    <!-- [3] Resume -->
-    <section class="view doc" id="v3" aria-label="Resume">
+    <!-- [2] Resume -->
+    <section class="view doc" id="v2" aria-label="Resume" tabindex="0">
       <div class="doc-inner">
         <h2>Resume</h2>
-        <p class="sub">
-          Computer Science, Duke University · <a href="resume.pdf" target="_blank" rel="noopener">Download PDF ↗</a>
-        </p>
+        <p class="sub">Computer Science, Duke University</p>
         <div id="resume"></div>
       </div>
     </section>
 
-    <!-- [4] Contact -->
-    <section class="view doc" id="v4" aria-label="Contact">
-      <div class="doc-inner">
+    <!-- [3] Contact -->
+    <section class="view doc" id="v3" aria-label="Contact" tabindex="0">
+      <div class="doc-inner contact-layout">
         <h2>Contact</h2>
-        <p class="sub">Always happy to talk about AI, startups, or the Minnesota Twins.</p>
-        <div class="contact-list">
-          <a href="mailto:blakepasse@gmail.com"
-            ><span class="k">Email</span><span class="v">blakepasse@gmail.com</span><span class="arr">↗</span></a
-          >
-          <a href="https://www.linkedin.com/in/blake-passe" target="_blank" rel="noopener"
-            ><span class="k">LinkedIn</span><span class="v">in/blake-passe</span><span class="arr">↗</span></a
-          >
-          <a href="resume.pdf" target="_blank" rel="noopener"
-            ><span class="k">Resume</span><span class="v">blake_passe.pdf</span><span class="arr">↗</span></a
-          >
+        <p class="sub">Always happy to talk about AI, startups, or Duke basketball.</p>
+        <div class="contact-body">
+          <img class="portrait" src="portrait.jpg" width="900" height="1200" alt="Portrait of Blake Passe" />
+          <div class="contact-list">
+            <a href="mailto:blakepasse@gmail.com"
+              ><span class="k">Email</span><span class="v">blakepasse@gmail.com</span><span class="arr">↗</span></a
+            >
+            <a href="https://www.linkedin.com/in/blake-passe" target="_blank" rel="noopener"
+              ><span class="k">LinkedIn</span><span class="v">linkedin.com/in/blake-passe</span
+              ><span class="arr">↗</span></a
+            >
+          </div>
         </div>
       </div>
     </section>
 
     <nav class="switcher" aria-label="Views">
       <button type="button" data-go="1">[1]</button><button type="button" data-go="2">[2]</button
-      ><button type="button" data-go="3">[3]</button><button type="button" data-go="4">[4]</button>
+      ><button type="button" data-go="3">[3]</button>
     </nav>
     <button type="button" class="pill" id="findBtn">Find [F]</button>
     <div class="clock" id="clock"></div>
@@ -92,17 +82,14 @@
           <path d="M12 4v16" />
         </svg>
         <nav aria-label="Site">
-          <div><button type="button" data-go="2">About</button></div>
+          <div><button type="button" data-go="1">Home</button></div>
+          <div><button type="button" data-go="2">Resume</button></div>
           <div>
-            <button type="button" data-go="1">Projects</button>
+            <span class="menu-label">Projects</span>
             <div class="child" id="menuProjects"></div>
           </div>
           <div>
-            <button type="button" data-go="3">Resume</button>
-            <div class="child"><a href="resume.pdf" target="_blank" rel="noopener">PDF</a></div>
-          </div>
-          <div>
-            <button type="button" data-go="4">Contact</button>
+            <button type="button" data-go="3">Contact</button>
             <div class="child">
               <a href="mailto:blakepasse@gmail.com">Email</a
               ><a href="https://www.linkedin.com/in/blake-passe" target="_blank" rel="noopener">LinkedIn</a>

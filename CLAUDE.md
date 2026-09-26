@@ -6,8 +6,9 @@ Static site (no framework, no build step) styled after paradigm.xyz. Served by V
 
 - `index.html` — markup only. No inline `<script>`, `<style>`, `style=""`, or `on*=` handlers: the CSP in `vercel.json` forbids them and `tests/data.spec.js` enforces it.
 - `styles.css` — all styling. Colors are CSS custom properties on `:root`.
-- `data.js` — **all content** (projects, resume, skills). Content edits go here, never in `app.js`.
-- `app.js` — ES module: carousel, views, menu, project panel, find palette, network canvas.
+- `data.js` — **all content** (projects, resume, skills, globe places). Content edits go here, never in `app.js`.
+- `app.js` — ES module: three views ([1] home = headline + globe, [2] resume, [3] contact), menu, project panel, find palette.
+- `globe.js` — the home view's wireframe globe (canvas 2D, orthographic). Places come from `PLACES` in `data.js`.
 - `tests/` — Playwright. `data.spec.js` = content invariants; `site.spec.js` = end-to-end + axe accessibility.
 - `vercel.json` — security headers and caching. `.vercelignore` keeps dev files out of the deploy.
 

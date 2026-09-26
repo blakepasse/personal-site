@@ -1,4 +1,5 @@
-import { PROJECTS, RESUME, SKILLS, INTERESTS } from "./data.js";
+import { PROJECTS, RESUME, SKILLS, INTERESTS, PLACES } from "./data.js";
+import { createGlobe } from "./globe.js";
 
 // Content is static and trusted, but escape anything interpolated into HTML anyway so a
 // stray "<" or "&" in data.js can never break markup or become an injection vector.
@@ -109,61 +110,17 @@ function drawArt(ctx, w, h, pattern, seed, t = 0) {
   ctx.globalAlpha = 1;
 }
 
-/* ---------- build carousel ---------- */
-const track = document.getElementById("track");
-const arts = [];
-PROJECTS.forEach((p, i) => {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.dataset.i = i;
-  const c = document.createElement("canvas");
-  c.width = 620;
-  c.height = 560;
-  const cap = document.createElement("div");
-  cap.className = "cap";
-  cap.textContent = p.title;
-  card.append(c, cap);
-  track.append(card);
-  card.addEventListener("click", () => (i === cur ? openPanel(i) : setCur(i)));
-  arts.push({ ctx: c.getContext("2d"), p, i });
-});
-document.getElementById("menuProjects").innerHTML = PROJECTS.map(
-  (p, i) => `<button type="button" data-proj="${i}">${esc(p.title)}</button>`,
-).join("");
+/* ---------- project pages ---------- */
+// Project write-ups are still in progress. While false, nothing links to them: no menu list,
+// no resume links, no search results, no #project-id deep links. Flip to true to publish.
+const SHOW_PROJECTS = false;
 
-let cur = 0;
-function layout() {
-  const cards = track.children,
-    cw = cards[0].offsetWidth + 12;
-  track.style.transform = `translate(${innerWidth / 2 - cw * cur - cards[0].offsetWidth / 2}px, -50%)`;
-  [...cards].forEach((c, i) => c.classList.toggle("current", i === cur));
-}
-function setCur(i, push = true) {
-  cur = (i + PROJECTS.length) % PROJECTS.length;
-  layout();
-  if (push && view === 1) history.replaceState(null, "", "#" + PROJECTS[cur].id);
-}
-document.getElementById("prev").onclick = () => setCur(cur - 1);
-document.getElementById("next").onclick = () => setCur(cur + 1);
-let touchX = null;
-track.parentElement.addEventListener("touchstart", (e) => (touchX = e.touches[0].clientX), { passive: true });
-track.parentElement.addEventListener("touchend", (e) => {
-  if (touchX == null) return;
-  const dx = e.changedTouches[0].clientX - touchX;
-  if (Math.abs(dx) > 40) setCur(cur + (dx < 0 ? 1 : -1));
-  touchX = null;
-});
-let wheelLock = 0;
-track.parentElement.addEventListener(
-  "wheel",
-  (e) => {
-    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (Date.now() < wheelLock || Math.abs(d) < 12) return;
-    wheelLock = Date.now() + 450;
-    setCur(cur + (d > 0 ? 1 : -1));
-  },
-  { passive: true },
-);
+const menuProjects = document.getElementById("menuProjects");
+if (SHOW_PROJECTS) {
+  menuProjects.innerHTML = PROJECTS.map(
+    (p, i) => `<button type="button" data-proj="${i}">${esc(p.title)}</button>`,
+  ).join("");
+} else menuProjects.parentElement.remove();
 
 /* ---------- resume ---------- */
 const rEl = document.getElementById("resume");
@@ -172,7 +129,7 @@ for (const [sec, items] of Object.entries(RESUME)) {
   rh += `<div class="section-label">${esc(sec)}</div>`;
   for (const it of items) {
     rh += `<div class="row"><div class="when">${esc(it.when)}</div><div>
-      <h3>${it.proj ? `<a class="plain" href="#${esc(it.proj)}" data-proj="${PROJECTS.findIndex((p) => p.id === it.proj)}">${esc(it.org)} ↗</a>` : esc(it.org)}</h3>
+      <h3>${SHOW_PROJECTS && it.proj ? `<a class="plain" href="#${esc(it.proj)}" data-proj="${PROJECTS.findIndex((p) => p.id === it.proj)}">${esc(it.org)} ↗</a>` : esc(it.org)}</h3>
       <div class="role">${esc(it.role)}</div><ul>${it.pts.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div></div>`;
   }
 }
@@ -182,7 +139,8 @@ rEl.innerHTML = rh;
 
 /* ---------- views ---------- */
 let view = 0;
-const VIEW_NAMES = ["Projects", "About", "Resume", "Contact"];
+const VIEW_NAMES = ["Home", "Resume", "Contact"];
+const VIEW_HASHES = ["", "home", "resume", "contact"];
 const switcher = document.querySelectorAll(".switcher button");
 function go(n, hash) {
   view = n;
@@ -195,9 +153,8 @@ function go(n, hash) {
   });
   closeMenu();
   closePanel();
-  const h = hash || ["", PROJECTS[cur].id, "about", "resume", "contact"][n];
-  history.replaceState(null, "", "#" + h);
-  if (n === 2) sizeNet();
+  history.replaceState(null, "", "#" + (hash || VIEW_HASHES[n]));
+  if (n === 1) globe.resize();
 }
 document.addEventListener("click", (e) => {
   const g = e.target.closest("[data-go]");
@@ -209,10 +166,8 @@ document.addEventListener("click", (e) => {
   const pr = e.target.closest("[data-proj]");
   if (pr) {
     e.preventDefault();
-    const i = +pr.dataset.proj;
-    go(1);
-    setCur(i);
-    setTimeout(() => openPanel(i), 250);
+    closeMenu();
+    openPanel(+pr.dataset.proj);
   }
 });
 
@@ -269,27 +224,31 @@ const find = document.getElementById("find"),
   fin = document.getElementById("findInput"),
   flist = document.getElementById("findList");
 const INDEX = [
-  ...PROJECTS.map((p, i) => ({
+  ...(SHOW_PROJECTS ? PROJECTS : []).map((p, i) => ({
     label: p.title,
     type: "Project",
     text: [p.title, p.kind, p.body, ...p.tags].join(" "),
+    act: () => openPanel(i),
+  })),
+  ...PLACES.map((p) => ({
+    label: p.name,
+    type: p.where,
+    text: [p.name, p.where, p.area, p.role, "place"].filter(Boolean).join(" "),
     act: () => {
       go(1);
-      setCur(i);
-      openPanel(i);
+      globe.select(p.id);
     },
   })),
   ...RESUME.Experience.concat(RESUME.Education).map((r) => ({
     label: r.org,
     type: "Resume",
     text: [r.org, r.role, ...r.pts].join(" "),
-    act: () => go(3),
+    act: () => go(2),
   })),
-  { label: "About", type: "Page", text: "about bio network", act: () => go(2) },
-  { label: "Email", type: "Contact", text: "email mail contact", act: () => go(4) },
-  { label: "LinkedIn", type: "Contact", text: "linkedin contact", act: () => go(4) },
-  { label: "Resume PDF", type: "File", text: "resume cv pdf download", act: () => window.open("resume.pdf", "_blank") },
-  ...SKILLS.map((s) => ({ label: s, type: "Skill", text: s, act: () => go(3) })),
+  { label: "Home", type: "Page", text: "home about globe places map world", act: () => go(1) },
+  { label: "Email", type: "Contact", text: "email mail contact", act: () => go(3) },
+  { label: "LinkedIn", type: "Contact", text: "linkedin contact", act: () => go(3) },
+  ...SKILLS.map((s) => ({ label: s, type: "Skill", text: s, act: () => go(2) })),
 ];
 let hits = [],
   sel = 0;
@@ -359,130 +318,31 @@ document.addEventListener("keydown", (e) => {
   else if (k === "f") {
     e.preventDefault();
     openFind();
-  } else if (["1", "2", "3", "4"].includes(k)) go(+k);
-  else if (view === 1 && e.key === "ArrowRight") setCur(cur + 1);
-  else if (view === 1 && e.key === "ArrowLeft") setCur(cur - 1);
-  else if (view === 1 && e.key === "Enter") openPanel(cur);
+  } else if (["1", "2", "3"].includes(k)) go(+k);
+  else if (view === 1 && e.key === "ArrowRight") globe.step(1);
+  else if (view === 1 && e.key === "ArrowLeft") globe.step(-1);
 });
 
-/* ---------- network canvas ---------- */
-const net = document.getElementById("net"),
-  nctx = net.getContext("2d");
-const LABELS = [
-  "Duke",
-  "YC",
-  "Articulate AI",
-  "Oddz",
-  "Mayo Clinic",
-  "Northrop Grumman",
-  "Oxford",
-  "Bass Connections",
-  "PyTorch",
-  "Computer Vision",
-  "LLMs",
-  "OSINT",
-];
-let nodes = [],
-  mouse = { x: -1e4, y: -1e4 };
-function sizeNet() {
-  const dpr = devicePixelRatio || 1;
-  net.width = innerWidth * dpr;
-  net.height = innerHeight * dpr;
-  nctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (!nodes.length) {
-    const r = rand(42);
-    const n = Math.round(Math.min(90, (innerWidth * innerHeight) / 14000));
-    nodes = Array.from({ length: n }, (_, i) => ({
-      x: r() * innerWidth,
-      y: r() * innerHeight,
-      vx: (r() - 0.5) * 0.3,
-      vy: (r() - 0.5) * 0.3,
-      shipped: r() > 0.45,
-      label: i < LABELS.length ? LABELS[i] : null,
-    }));
-  }
-}
-net.addEventListener("pointermove", (e) => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
+/* ---------- globe ---------- */
+const globe = createGlobe({
+  canvas: document.getElementById("globe"),
+  callout: document.getElementById("globeCallout"),
+  places: PLACES,
+  reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
 });
-net.addEventListener("pointerleave", () => {
-  mouse.x = mouse.y = -1e4;
-});
-function drawNet() {
-  const W = innerWidth,
-    H = innerHeight;
-  nctx.clearRect(0, 0, W, H);
-  for (const n of nodes) {
-    const dx = mouse.x - n.x,
-      dy = mouse.y - n.y,
-      d = Math.hypot(dx, dy);
-    if (d > 0 && d < 180) {
-      n.vx += (dx / d) * 0.015;
-      n.vy += (dy / d) * 0.015;
-    }
-    n.vx *= 0.985;
-    n.vy *= 0.985;
-    n.vx += (Math.random() - 0.5) * 0.02;
-    n.vy += (Math.random() - 0.5) * 0.02;
-    n.x += n.vx;
-    n.y += n.vy;
-    // clamp as well as reflect, so nodes never escape after a window shrink
-    if (n.x < 0 || n.x > W) {
-      n.vx *= -1;
-      n.x = Math.min(Math.max(n.x, 0), W);
-    }
-    if (n.y < 0 || n.y > H) {
-      n.vy *= -1;
-      n.y = Math.min(Math.max(n.y, 0), H);
-    }
-  }
-  nctx.lineWidth = 1;
-  for (let i = 0; i < nodes.length; i++)
-    for (let j = i + 1; j < nodes.length; j++) {
-      const a = nodes[i],
-        b = nodes[j],
-        d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (d < 140) {
-        nctx.strokeStyle = `rgba(80,210,40,${(1 - d / 140) * 0.55})`;
-        nctx.beginPath();
-        nctx.moveTo(a.x, a.y);
-        nctx.lineTo(b.x, b.y);
-        nctx.stroke();
-      }
-    }
-  nctx.font = "400 10px IBM Plex Mono, monospace";
-  for (const n of nodes) {
-    nctx.beginPath();
-    nctx.arc(n.x, n.y, n.label ? 4 : 2.6, 0, 7);
-    if (n.shipped) {
-      nctx.fillStyle = "#111";
-      nctx.fill();
-    } else {
-      nctx.strokeStyle = "#111";
-      nctx.stroke();
-    }
-    if (n.label) {
-      nctx.fillStyle = "#666";
-      nctx.fillText(n.label, n.x + 8, n.y + 3);
-    }
-  }
-}
+document.getElementById("placesList").innerHTML = PLACES.map(
+  (p) => `<li>${esc(p.name)}, ${esc(p.where)}: ${[p.role, p.when].filter(Boolean).map(esc).join(", ")}</li>`,
+).join("");
 
 /* ---------- animation loop ---------- */
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let t0 = performance.now();
 function frame(now) {
   const t = reduce ? 0 : (now - t0) / 1000;
-  if (view === 1) {
-    for (const a of arts)
-      if (Math.abs(a.i - cur) <= 2) drawArt(a.ctx, 620, 560, a.p.pattern, a.i + 1, a.i === cur ? t * 0.6 : 0);
-  }
   if (panelIdx >= 0) drawArt(pctx, 620, 560, PROJECTS[panelIdx].pattern, panelIdx + 1, t * 0.6);
-  if (view === 2) drawNet();
+  if (view === 1) globe.draw(now);
   requestAnimationFrame(frame);
 }
-arts.forEach((a) => drawArt(a.ctx, 620, 560, a.p.pattern, a.i + 1, 0));
 
 /* ---------- clock ---------- */
 const clock = document.getElementById("clock");
@@ -499,17 +359,14 @@ tick();
 
 /* ---------- init ---------- */
 addEventListener("resize", () => {
-  layout();
-  if (view === 2) sizeNet();
+  if (view === 1) globe.resize();
 });
 function route() {
   const h = location.hash.slice(1);
-  const pi = PROJECTS.findIndex((p) => p.id === h);
-  if (pi >= 0) {
-    cur = pi;
-    go(1, h);
-  } else go({ about: 2, resume: 3, contact: 4 }[h] || 1);
-  layout();
+  // old links (#about, #places, or a project id) still land somewhere sensible
+  const pi = SHOW_PROJECTS ? PROJECTS.findIndex((p) => p.id === h) : -1;
+  go({ resume: 2, contact: 3 }[h] || 1, pi >= 0 ? VIEW_HASHES[1] : undefined);
+  if (pi >= 0) openPanel(pi);
 }
 addEventListener("hashchange", route);
 route();

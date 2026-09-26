@@ -1,7 +1,7 @@
 // Content invariants. These catch the mistakes an agent (or a human) makes when editing data.js.
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
-import { PROJECTS, RESUME } from "../data.js";
+import { PROJECTS, RESUME, PLACES } from "../data.js";
 
 const PATTERNS = ["grid", "dots", "radar", "bars", "contour", "waves"];
 
@@ -12,7 +12,7 @@ test("project ids are unique kebab-case", () => {
 });
 
 test("project ids do not collide with view routes", () => {
-  for (const p of PROJECTS) expect(["about", "resume", "contact"]).not.toContain(p.id);
+  for (const p of PROJECTS) expect(["home", "resume", "contact"]).not.toContain(p.id);
 });
 
 test("every project has required fields and a known pattern", () => {
@@ -40,5 +40,18 @@ test("no phone number is published", () => {
   for (const f of ["index.html", "data.js", "app.js"]) {
     const src = readFileSync(new URL(`../${f}`, import.meta.url), "utf8");
     expect(src, f).not.toMatch(/\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/);
+  }
+});
+
+test("globe places have unique ids and valid coordinates", () => {
+  const ids = PLACES.map((p) => p.id);
+  expect(new Set(ids).size).toBe(ids.length);
+  for (const p of PLACES) {
+    expect(p.lat, p.id).toBeGreaterThanOrEqual(-90);
+    expect(p.lat, p.id).toBeLessThanOrEqual(90);
+    expect(p.lon, p.id).toBeGreaterThanOrEqual(-180);
+    expect(p.lon, p.id).toBeLessThanOrEqual(180);
+    for (const k of ["name", "where", "role"]) expect(p[k], `${p.id}.${k}`).toBeTruthy();
+    expect(typeof p.when, `${p.id}.when`).toBe("string");
   }
 });
