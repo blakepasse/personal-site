@@ -123,7 +123,7 @@ if (SHOW_PROJECTS) {
 } else menuProjects.parentElement.remove();
 
 /* ---------- resume ---------- */
-const rEl = document.getElementById("resume");
+const rEl = document.getElementById("resumeEntries");
 let rh = "";
 for (const [sec, items] of Object.entries(RESUME)) {
   rh += `<div class="section-label">${esc(sec)}</div>`;
@@ -137,17 +137,17 @@ rEl.innerHTML = rh;
 
 /* ---------- views ---------- */
 let view = 0;
-const VIEW_NAMES = ["Home", "Resume", "Contact"];
 const VIEW_HASHES = ["", "home", "resume", "contact"];
 const switcher = document.querySelectorAll(".switcher button");
 function go(n, hash) {
   view = n;
-  document.querySelectorAll(".view").forEach((v, i) => v.classList.toggle("active", i === n - 1));
+  document.querySelectorAll(".view").forEach((v, i) => {
+    v.classList.toggle("active", i === n - 1);
+    if (i === n - 1) v.scrollTop = 0; // every page opens at its top, whatever was scrolled before
+  });
   switcher.forEach((b, i) => {
-    const on = i === n - 1;
-    b.setAttribute("aria-current", on);
-    b.setAttribute("aria-label", `View ${i + 1}: ${VIEW_NAMES[i]}`);
-    b.textContent = on ? "[ ]" : `[${i + 1}]`;
+    if (i === n - 1) b.setAttribute("aria-current", "page");
+    else b.removeAttribute("aria-current");
   });
   closeMenu();
   closePanel();

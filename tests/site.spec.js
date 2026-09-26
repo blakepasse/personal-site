@@ -50,9 +50,12 @@ test("old links still land somewhere sensible", async ({ page }) => {
   await expect(page.locator("#panel")).not.toHaveClass(/open/); // project pages are unpublished
 });
 
-test("switcher buttons work by click", async ({ page }) => {
+test("labeled page tabs work by click and show the current page", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "View 2: Resume" }).click();
+  const tabs = page.getByRole("navigation", { name: "Pages" });
+  await expect(tabs.getByRole("button", { name: /Home/ })).toHaveAttribute("aria-current", "page");
+  await tabs.getByRole("button", { name: /Resume/ }).click();
+  await expect(tabs.getByRole("button", { name: /Resume/ })).toHaveAttribute("aria-current", "page");
   await expect(page.locator("#v2")).toHaveClass(/active/);
   await expect(page.getByRole("heading", { name: "Resume" })).toBeVisible();
 });
@@ -188,4 +191,51 @@ test("globe callout never overlaps the headline or legend", async ({ page }) => 
     );
     expect(overlap, `callout ${i} overlaps headline`).toBe(false);
   }
+});
+
+test("switching pages always starts at the top", async ({ page }) => {
+  await page.goto("/#resume");
+  await page.locator("#v2").evaluate((el) => (el.scrollTop = el.scrollHeight));
+  expect(await page.locator("#v2").evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  await page.keyboard.press("1");
+  await page
+    .getByRole("navigation", { name: "Pages" })
+    .getByRole("button", { name: /Resume/ })
+    .click();
+  expect(await page.locator("#v2").evaluate((el) => el.scrollTop)).toBe(0);
+});
+
+test("loading a page link directly starts at the top", async ({ page }) => {
+  // regression: an element with id="resume" made the browser jump to it on /#resume
+  for (const h of ["resume", "contact"]) {
+    await page.goto(`/#${h}`);
+    await page.waitForTimeout(200);
+    const top = await page.locator(".view.active").evaluate((el) => el.scrollTop);
+    expect(top, h).toBe(0);
+  }
+});
+
+test("no element id collides with a page link", async ({ page }) => {
+  await page.goto("/");
+  for (const h of ["home", "resume", "contact"]) await expect(page.locator(`[id="${h}"]`)).toHaveCount(0);
+});
+
+test("page links sit top-right beside the menu and never overlap the name", async ({ page }) => {
+  await page.goto("/");
+  const [name, links, menu] = await Promise.all([
+    page.locator(".wordmark").boundingBox(),
+    page.getByRole("navigation", { name: "Pages" }).boundingBox(),
+    page.locator("#menuBtn").boundingBox(),
+  ]);
+  expect(links.y).toBeLessThan(60);
+  expect(name.x + name.width).toBeLessThanOrEqual(links.x);
+  expect(links.x + links.width).toBeLessThanOrEqual(menu.x);
+});
+
+test("contact photo stacks above the links on phones and sits beside them on desktop", async ({ page }) => {
+  await page.goto("/#contact");
+  const photo = await page.locator(".portrait").boundingBox();
+  const list = await page.locator(".contact-list").boundingBox();
+  if ((page.viewportSize()?.width ?? 1280) < 640) expect(photo.y + photo.height).toBeLessThanOrEqual(list.y);
+  else expect(photo.x + photo.width).toBeLessThanOrEqual(list.x);
 });

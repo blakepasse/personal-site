@@ -47,7 +47,8 @@ header {
   z-index: 20;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 20px;
   pointer-events: none;
   /* scrolled page text fades out behind the wordmark instead of overlapping it */
   background: linear-gradient(var(--bg) 75%, transparent);
@@ -77,20 +78,32 @@ header {
   z-index: 40;
 }
 
+/* page links: top-right, beside the [M] menu button; current page underlined */
 .switcher {
   position: fixed;
-  left: 20px;
-  bottom: 18px;
-  z-index: 20;
+  top: 16px;
+  right: 72px;
+  height: 24px;
+  z-index: 25;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 16px;
 }
 .switcher button {
-  padding: 2px 0;
-  color: var(--ink);
-}
-.switcher button[aria-current="true"] {
+  font-size: 12px;
   color: var(--muted);
+  padding: 2px 0;
+  text-underline-offset: 4px;
+}
+.switcher button:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+}
+.switcher button[aria-current="page"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ink);
 }
 #findBtn {
   position: fixed;
@@ -443,7 +456,7 @@ header {
 }
 
 @media (max-width: 640px) {
-  .globe-callout .contact-body {
+  .contact-body {
     grid-template-columns: 1fr;
     gap: 24px;
   }
@@ -462,7 +475,20 @@ header {
     display: none;
   }
   .legend {
-    bottom: 50px;
+    max-width: calc(100% - 130px); /* clear of the Find button at bottom-right */
+  }
+  .wordmark {
+    font-size: 20px;
+  }
+  .switcher {
+    right: 64px;
+    gap: 12px;
+  }
+  .switcher button {
+    font-size: 11px;
+  }
+  #menuBtn {
+    right: 12px;
   }
   .menu nav {
     margin-right: 44px;
@@ -490,7 +516,7 @@ header {
 .legend {
   position: absolute;
   left: 20px;
-  bottom: 52px;
+  bottom: 18px;
   max-width: 280px;
   z-index: 1;
 }
@@ -560,4 +586,19 @@ header {
 .doc:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: -2px;
+}
+
+/* scrolled text fades out behind the bottom page tabs, like it does under the header */
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto 0 0 0;
+  height: 56px;
+  background: linear-gradient(transparent, var(--bg) 55%);
+  pointer-events: none;
+  z-index: 15;
+}
+/* home doesn't scroll, and its sentence sits at the very bottom, so no fade there */
+body:has(#v1.active)::after {
+  display: none;
 }
