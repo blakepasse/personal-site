@@ -7,7 +7,10 @@ const vercel = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url
 const csp = vercel.headers.flatMap((h) => h.headers).find((h) => h.key === "Content-Security-Policy").value;
 
 test("site runs under the production CSP with no violations", async ({ page }) => {
+  // The CSP header only matters on the HTML document, so intercept just that. Intercepting
+  // everything (fonts included) let slow third-party requests outlive the test and error out.
   await page.route("**/*", async (route) => {
+    if (route.request().resourceType() !== "document") return route.continue();
     const res = await route.fetch();
     await route.fulfill({ response: res, headers: { ...res.headers(), "content-security-policy": csp } });
   });
@@ -25,4 +28,5 @@ test("site runs under the production CSP with no violations", async ({ page }) =
   for (const k of ["2", "3", "1", "f"]) await page.keyboard.press(k);
   expect(await page.evaluate(() => window.__cspViolations)).toEqual([]);
   expect(errors).toEqual([]);
+  await page.unrouteAll({ behavior: "ignoreErrors" });
 });

@@ -13,6 +13,7 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
+    { name: "iphone", use: { ...devices["iPhone 14"] } }, // WebKit: what iPhone Safari actually runs
   ],
   webServer: remote
     ? undefined

@@ -70,7 +70,7 @@ Rules of thumb:
 
 ## 5. Evals: measuring agents, not vibes
 
-If you build anything with an LLM inside it (Articulate AI, for example), interviewers will ask how you know it works.
+If you build anything with an LLM inside it (Helonic, for example), interviewers will ask how you know it works.
 
 - **Golden set:** 20–200 real inputs with expected outputs or rubrics. Run it on every prompt or model change.
 - **Graders:** exact match/regex where possible; LLM-as-judge with a rubric where not. Validate the judge against human labels.

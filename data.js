@@ -4,8 +4,8 @@
 
 export const PROJECTS = [
   {
-    id: "articulate-ai",
-    title: "Articulate AI",
+    id: "helonic",
+    title: "Helonic",
     when: "2025 – 2026",
     kind: "Founder & CEO · YC",
     body: "An AI-native construction platform that rethinks clash detection with a proprietary computer vision model.",
@@ -141,10 +141,10 @@ export const RESUME = {
   Experience: [
     {
       when: "2025 – 2026",
-      org: "Articulate AI Inc.",
+      org: "Helonic",
       role: "Founder & CEO",
       pts: ["AI-native startup backed by Y Combinator; $700k raised"],
-      proj: "articulate-ai",
+      proj: "helonic",
     },
     {
       when: "2024 – Present",
@@ -245,8 +245,8 @@ export const PLACES = [
     role: "Founder",
   },
   {
-    id: "articulate-ai",
-    name: "Articulate AI",
+    id: "helonic",
+    name: "Helonic",
     where: "San Francisco, CA",
     lat: 37.78,
     lon: -122.4,
