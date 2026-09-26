@@ -290,6 +290,12 @@ document.getElementById("findBtn").onclick = openFind;
 
 /* ---------- keyboard ---------- */
 document.addEventListener("keydown", (e) => {
+  // ⌘K / Ctrl+K: the common "open search" shortcut; same as F, and toggles it closed again
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault(); // stop the browser's own Ctrl+K (focus address bar) from firing
+    find.classList.contains("open") ? closeFind() : openFind();
+    return;
+  }
   if (find.classList.contains("open")) {
     if (e.key === "Escape") closeFind();
     else if (e.key === "ArrowDown") {

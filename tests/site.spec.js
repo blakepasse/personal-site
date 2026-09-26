@@ -239,3 +239,12 @@ test("contact photo stacks above the links on phones and sits beside them on des
   if ((page.viewportSize()?.width ?? 1280) < 640) expect(photo.y + photo.height).toBeLessThanOrEqual(list.y);
   else expect(photo.x + photo.width).toBeLessThanOrEqual(list.x);
 });
+
+test("Cmd/Ctrl+K opens find like F does, and toggles it closed", async ({ page }) => {
+  await page.goto("/#resume");
+  await page.keyboard.press("ControlOrMeta+k");
+  await expect(page.locator("#find")).toHaveClass(/open/);
+  await expect(page.locator("#findInput")).toBeFocused();
+  await page.keyboard.press("ControlOrMeta+k");
+  await expect(page.locator("#find")).not.toHaveClass(/open/);
+});
