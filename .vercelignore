@@ -1,0 +1,10 @@
+node_modules
+tests
+.github
+.claude
+.githooks
+docs
+test-results
+playwright-report
+*.config.js
+CLAUDE.md

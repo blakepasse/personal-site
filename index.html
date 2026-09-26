@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blake Passe</title>
+    <meta name="description" content="Blake Passe — founder, AI researcher, Duke CS." />
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Blake Passe" />
+    <meta property="og:description" content="Founder, AI researcher, Duke CS. Projects, resume, and contact." />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header><a class="wordmark" href="#" data-go="1">Blake Passe</a></header>
+    <button type="button" class="pill" id="menuBtn" aria-expanded="false" aria-controls="menu">[M]</button>
+
+    <!-- [1] Projects -->
+    <section class="view" id="v1" aria-label="Projects">
+      <div class="track" id="track"></div>
+      <div class="carousel-nav">
+        <button type="button" id="prev" aria-label="Previous project">←</button>
+        <button type="button" id="next" aria-label="Next project">→</button>
+      </div>
+    </section>
+
+    <!-- [2] Network / about -->
+    <section class="view" id="v2" aria-label="About">
+      <canvas id="net"></canvas>
+      <div class="bio">
+        <h1>Building AI systems that leave the lab.</h1>
+        <p>Duke CS · Y Combinator founder · former Mayo Clinic &amp; Northrop Grumman AI</p>
+      </div>
+      <div class="legend">
+        <p>● Shipped&nbsp;&nbsp;○ Research</p>
+        <p>Live graph of the projects, labs and teams I've worked with. Move your cursor to pull the network.</p>
+      </div>
+    </section>
+
+    <!-- [3] Resume -->
+    <section class="view doc" id="v3" aria-label="Resume">
+      <div class="doc-inner">
+        <h2>Resume</h2>
+        <p class="sub">
+          Computer Science, Duke University · <a href="resume.pdf" target="_blank" rel="noopener">Download PDF ↗</a>
+        </p>
+        <div id="resume"></div>
+      </div>
+    </section>
+
+    <!-- [4] Contact -->
+    <section class="view doc" id="v4" aria-label="Contact">
+      <div class="doc-inner">
+        <h2>Contact</h2>
+        <p class="sub">Always happy to talk about AI, startups, or the Minnesota Twins.</p>
+        <div class="contact-list">
+          <a href="mailto:blakepasse@gmail.com"
+            ><span class="k">Email</span><span class="v">blakepasse@gmail.com</span><span class="arr">↗</span></a
+          >
+          <a href="https://www.linkedin.com/in/blake-passe" target="_blank" rel="noopener"
+            ><span class="k">LinkedIn</span><span class="v">in/blake-passe</span><span class="arr">↗</span></a
+          >
+          <a href="resume.pdf" target="_blank" rel="noopener"
+            ><span class="k">Resume</span><span class="v">blake_passe.pdf</span><span class="arr">↗</span></a
+          >
+        </div>
+      </div>
+    </section>
+
+    <nav class="switcher" aria-label="Views">
+      <button type="button" data-go="1">[1]</button><button type="button" data-go="2">[2]</button
+      ><button type="button" data-go="3">[3]</button><button type="button" data-go="4">[4]</button>
+    </nav>
+    <button type="button" class="pill" id="findBtn">Find [F]</button>
+    <div class="clock" id="clock"></div>
+
+    <!-- menu -->
+    <div class="menu" id="menu" inert>
+      <div class="scrim" data-close-menu></div>
+      <div class="sheet">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" inert>
+          <path d="M4 4h16v16H4z" />
+          <path d="M4 4l8 8 8-8M4 20l8-8 8 8" />
+          <path d="M12 4v16" />
+        </svg>
+        <nav aria-label="Site">
+          <div><button type="button" data-go="2">About</button></div>
+          <div>
+            <button type="button" data-go="1">Projects</button>
+            <div class="child" id="menuProjects"></div>
+          </div>
+          <div>
+            <button type="button" data-go="3">Resume</button>
+            <div class="child"><a href="resume.pdf" target="_blank" rel="noopener">PDF</a></div>
+          </div>
+          <div>
+            <button type="button" data-go="4">Contact</button>
+            <div class="child">
+              <a href="mailto:blakepasse@gmail.com">Email</a
+              ><a href="https://www.linkedin.com/in/blake-passe" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- project detail -->
+    <aside class="panel" id="panel" inert>
+      <button type="button" class="pill close" id="panelClose">[Esc]</button>
+      <canvas id="panelArt" width="620" height="560"></canvas>
+      <div class="meta" id="pMeta"></div>
+      <h3 id="pTitle">Project</h3>
+      <p id="pBody"></p>
+      <ul id="pPoints"></ul>
+      <div class="tags" id="pTags"></div>
+    </aside>
+
+    <!-- find -->
+    <div class="find" id="find" role="dialog" aria-label="Find">
+      <div class="box">
+        <input
+          type="search"
+          id="findInput"
+          aria-label="Find"
+          placeholder="Find projects, roles, skills…"
+          autocomplete="off"
+        />
+        <ol id="findList"></ol>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

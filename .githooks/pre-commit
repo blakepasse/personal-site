@@ -1,0 +1,5 @@
+#!/bin/sh
+# Blocks commits that fail lint or tests. Enabled by `npm install` (see "prepare" in package.json).
+# Bypass in an emergency with `git commit --no-verify`, and say so in the commit message.
+set -e
+npm run --silent check

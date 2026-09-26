@@ -1,0 +1,187 @@
+// Site content. Edit this file to add or change projects and resume entries.
+// Every project needs a unique kebab-case `id` (used as its URL hash) and a `pattern`
+// from: grid, dots, radar, bars, contour, waves.
+
+export const PROJECTS = [
+  {
+    id: "articulate-ai",
+    title: "Articulate AI",
+    when: "2025 – 2026",
+    kind: "Founder & CEO · YC",
+    body: "An AI-native construction platform that rethinks clash detection with a proprietary computer vision model.",
+    points: [
+      "Raised $500k from Y Combinator and $200k from Great Wave Ventures, Benjamin Bryant, and others",
+      "Built and trained computer vision ensemble systems; deployed scalable AI agents on Render",
+      "Achieved FERPA and COPPA compliance via BAA and SOC 2",
+    ],
+    tags: ["Computer vision", "Agents", "Render", "SOC 2"],
+    pattern: "grid",
+  },
+  {
+    id: "oddz",
+    title: "Oddz for iMessage",
+    when: "2024 – Present",
+    kind: "Founder",
+    body: "A social iMessage app that peaked as the #17 app in the App Store's Entertainment category.",
+    points: [
+      "Designed, built and shipped the app end-to-end",
+      "Designed visuals in Figma and Canva",
+      "Optimized acquisition through Instagram ad A/B testing",
+    ],
+    tags: ["SwiftUI", "iMessage", "Figma", "Growth"],
+    pattern: "dots",
+  },
+  {
+    id: "strike-prediction",
+    title: "OSINT Strike Prediction",
+    when: "2025",
+    kind: "Northrop Grumman · AI Intern",
+    body: "A missile strike prediction pipeline for the Ukraine–Russia war built from open-source intelligence.",
+    points: [
+      "Led the pipeline combining NLP and tabular machine learning",
+      "Met regularly with ~20 company AI experts and C-suite leaders on enterprise AI governance",
+    ],
+    tags: ["OSINT", "NLP", "Tabular ML"],
+    pattern: "radar",
+  },
+  {
+    id: "llm-quantization",
+    title: "LLM Quantization in Medicine",
+    when: "2024",
+    kind: "Mayo Clinic AI Lab · Researcher",
+    body: "Lead-author research on quantizing large language models for clinical settings.",
+    points: [
+      "Published an abstract in the Journal of Imaging Informatics in Medicine as lead author",
+      "Presented at the Boston Conference on Machine Intelligence in Medical Imaging to 90+ clinician-researchers",
+    ],
+    tags: ["LLMs", "Quantization", "PyTorch"],
+    pattern: "bars",
+  },
+  {
+    id: "foramen-segmentation",
+    title: "Neural Foramen Segmentation",
+    when: "2024",
+    kind: "Mayo Clinic AI Lab",
+    body: "A segmentation and classification pipeline for spinal neural foramina in medical imaging.",
+    points: [
+      "Fine-tuned YOLOv5 for accurate bounding-box labels",
+      "Built the end-to-end segmentation and classification pipeline",
+    ],
+    tags: ["YOLOv5", "Segmentation", "Medical imaging"],
+    pattern: "contour",
+  },
+  {
+    id: "tbi-research",
+    title: "Traumatic Brain Injury Data",
+    when: "2024 – 2025",
+    kind: "Duke Bass Connections",
+    body: "Quantitative research on a 120k+ record traumatic brain injury dataset.",
+    points: [
+      "Improved dataset representativeness by ~52%",
+      "Presented findings from 28 clinician interviews to a 250+ person symposium; produced 2 research papers",
+    ],
+    tags: ["Data science", "Healthcare", "Research"],
+    pattern: "waves",
+  },
+  {
+    id: "this-site",
+    title: "This Site",
+    when: "2026",
+    kind: "Agentic engineering",
+    body: "A personal site built and maintained with an agentic workflow: every change is checked by tests, CI, and an adversarial AI review before it ships.",
+    points: [
+      "Adversarial reviewer subagent paired with a skeptic that must reproduce each finding before it is reported",
+      "Project skills for review, deploy, and content changes; hooks that format and test on every edit",
+      "Playwright end-to-end tests, Lighthouse budgets, and strict security headers, deployed on Vercel",
+    ],
+    tags: ["Claude Code", "Playwright", "GitHub Actions", "Vercel"],
+    pattern: "grid",
+  },
+];
+
+export const RESUME = {
+  Education: [
+    {
+      when: "2023 – Present",
+      org: "Duke University",
+      role: "B.S. Computer Science · Durham, NC",
+      pts: [
+        "GPA 3.93/4.00 · Dean's List with Distinction",
+        "Duke Launch (~20 undergrad invitees) · Pentagon invitee",
+        "TA, Applied Machine Learning (Prof. Fain) — tabular ML, CV, transformers, RL",
+      ],
+    },
+    {
+      when: "2025 – 2026",
+      org: "Y Combinator",
+      role: "Founder & CEO · San Francisco, CA",
+      pts: ["$500k investment; ~0.5% acceptance rate"],
+    },
+    {
+      when: "Summer 2025",
+      org: "University of Oxford",
+      role: "Ethics and Philosophy of AI · Oxford, England",
+      pts: ["GPA 4.00/4.00"],
+    },
+  ],
+  Experience: [
+    {
+      when: "2025 – 2026",
+      org: "Articulate AI Inc.",
+      role: "Founder & CEO",
+      pts: ["AI-native construction clash detection; $700k raised"],
+      proj: "articulate-ai",
+    },
+    {
+      when: "2024 – Present",
+      org: "Oddz for iMessage",
+      role: "Founder",
+      pts: ["Peaked #17 in App Store Entertainment"],
+      proj: "oddz",
+    },
+    {
+      when: "2025",
+      org: "Northrop Grumman",
+      role: "Artificial Intelligence Intern",
+      pts: ["OSINT missile strike prediction with NLP + tabular ML"],
+      proj: "strike-prediction",
+    },
+    {
+      when: "2024 – 2025",
+      org: "Duke Hospital Bass Connections",
+      role: "Quantitative Researcher",
+      pts: ["120k+ TBI dataset; 2 research papers"],
+      proj: "tbi-research",
+    },
+    {
+      when: "2024",
+      org: "Mayo Clinic AI Laboratory",
+      role: "Artificial Intelligence Researcher",
+      pts: ["Lead-author LLM quantization abstract; YOLOv5 segmentation pipeline"],
+      proj: "llm-quantization",
+    },
+    {
+      when: "2024 – 2025",
+      org: "Duke Applied Machine Learning",
+      role: "Teaching Assistant",
+      pts: ["1 of 5 TAs; PyTorch and NumPy coursework"],
+    },
+  ],
+};
+export const INTERESTS =
+  "Minnesota Twins, geography, sand volleyball, ukulele, Duke Basketball, reading, jazz, lifting, bouldering";
+
+export const SKILLS = [
+  "Python",
+  "PyTorch",
+  "Scikit-learn",
+  "Hugging Face",
+  "LangChain",
+  "React / Next.js",
+  "SwiftUI",
+  "AWS",
+  "Computer vision",
+  "NLP",
+  "RAG",
+  "Agentic & voice AI",
+];
