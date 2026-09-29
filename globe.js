@@ -198,6 +198,10 @@ export function createGlobe({ canvas, callout, places, avoid = null, reduceMotio
   }
 
   function draw(now) {
+    // Re-measure whenever the canvas's laid-out size changes. Safari can run this script before
+    // styles.css applies, so the first measurement may be the default 300×150; without this the
+    // globe stays drawn at that size and gets stretched (blurry, zoomed) until a reload.
+    if (canvas.clientWidth !== w || canvas.clientHeight !== h) resize();
     const dt = lastT ? Math.min(now - lastT, 64) / 1000 : 0;
     lastT = now;
 
